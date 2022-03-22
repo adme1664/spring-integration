@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  sftp-server:
+    image: atmoz/sftp:latest
+    ports:
+    - "2222:22"
+    command: test:pass:100:100:upload
+    volumes:
+    - D:\sftp\persons\data:/home/test/upload
+
+  splunk:
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    container_name: splunk-server
+    mem_limit: 700M
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=EdgeP@ss220
+      - SPLUNK_ENABLE_LISTEN=9997
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - log_volume:/logs
+
+  splunkfowarder:
+    image: splunk/universalforwarder:8.2.2
+    hostname: splunkfowarder
+    mem_limit: 256M
+    environment:
+      - SPLUNK_START_ARGS=--accept-license --answer-yes
+      - SPLUNK_FORWARD_SERVER=splunk-server:9997
+      - SPLUNK_USER=root
+      - SPLUNK_PASSWORD=EdgeP@ss220
+      - SPLUNK_ADD=monitor /logs
+    restart: always
+    depends_on:
+        - splunk
+    volumes:
+        - log_volume:/logs
+volumes:
+    log_volume:
+
+
