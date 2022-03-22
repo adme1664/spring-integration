@@ -1,0 +1,3 @@
+com\adme\microservices\client\application\client\TemperatureResourceClient.class
+com\adme\microservices\client\application\domain\TemperatureScale.class
+com\adme\microservices\client\application\domain\Temperature.class
